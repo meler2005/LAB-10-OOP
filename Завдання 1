@@ -1,0 +1,81 @@
+using System;
+using System.Collections.Generic;
+
+// Абстрактний тип даних для множини з елементами типу char
+class CharSet
+{
+    private HashSet<char> set; // Задаємо множину з елементами типу char за допомогою HashSet
+
+    // Конструктор за замовчуванням
+    public CharSet()
+    {
+        set = new HashSet<char>(); // Ініціалізуємо множину порожньою
+    }
+
+    // Конструктор з параметром
+    public CharSet(IEnumerable<char> collection)
+    {
+        set = new HashSet<char>(collection); // Ініціалізуємо множину з заданою колекцією елементів
+    }
+
+    // Перенавантаження оператора "-" для видалення елементу з множини
+    public static CharSet operator -(CharSet a, char element)
+    {
+        a.set.Remove(element); // Видаляємо елемент з множини
+        return a; // Повертаємо множину після видалення елементу
+    }
+
+    // Перенавантаження оператора "*" для перетину множин
+    public static CharSet operator *(CharSet a, CharSet b)
+    {
+        CharSet result = new CharSet(); // Створюємо нову множину для результату
+        foreach (char element in a.set)
+        {
+            if (b.set.Contains(element))
+            {
+                result.set.Add(element); // Додаємо елемент до результату, якщо він присутній в обох множинах
+            }
+        }
+        return result; // Повертаємо результат перетину множин
+    }
+
+    // Перенавантаження оператора "<" для порівняння множин
+    public static bool operator <(CharSet a, CharSet b)
+    {
+        return a.set.IsProperSubsetOf(b.set); // Перевіряємо, чи є множина 'a' правильним підмножиною множини 'b'
+    }
+
+    // Перенавантаження оператора ">" для порівняння множин
+    public static bool operator >(CharSet a, CharSet b)
+    {
+        return a.set.IsProperSupersetOf(b.set); // Перевіряємо, чи є множина 'a' правильним супермножиною множини 'b'
+    }
+
+    // Виведення множини на консоль
+    public override string ToString()
+    {
+        return "{" + string.Join(", ", set) + "}"; // Повертаємо рядок з вмістом множини
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Створення двох множин
+        CharSet set1 = new CharSet(new char[] { 'a', 'b', 'c', 'd' });
+        CharSet set2 = new CharSet(new char[] { 'c', 'd', 'e', 'f' });
+
+        // Видалення елементу 'd' з першої множини
+        set1 = set1 - 'd';
+        Console.WriteLine("Множина set1 після видалення 'd': " + set1);
+
+        // Перетин двох множин
+        CharSet intersection = set1 * set2;
+        Console.WriteLine("Перетин множин set1 та set2: " + intersection);
+
+        // Порівняння множин
+        Console.WriteLine("set1 є правильним підмножиною set2: " + (set1 < set2));
+        Console.WriteLine("set1 є правильним супермножиною set2: " + (set1 > set2));
+    }
+}
